@@ -42,13 +42,13 @@ app.get('/proxy-image', async (req, res) => {
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const SENDER_EMAIL = 'eshwarreddygadi@gmail.com';
 
-// Endpoint to send an email
+// Endpoint to send an email with a temporary password and Realtor Notes
 app.post('/send-email', async (req, res) => {
-    const { clientEmail, invitationCode } = req.body;
+    const { clientEmail, tempPassword, realtorNotes } = req.body;
 
-    // Validate input
-    if (!clientEmail || !invitationCode) {
-        return res.status(400).json({ error: 'clientEmail and invitationCode are required' });
+    // Validate required input
+    if (!clientEmail || !tempPassword) {
+        return res.status(400).json({ error: 'clientEmail and tempPassword are required' });
     }
 
     const emailData = {
@@ -58,22 +58,23 @@ app.post('/send-email', async (req, res) => {
             },
         ],
         from: { email: SENDER_EMAIL, name: 'RealEst App' },
-        subject: 'Invitation to Join Realtor App',
+        subject: 'Your Temporary Password for Realtor App',
         content: [
             {
                 type: 'text/plain',
                 value: `
 Dear Client,
 
-You have been invited to join the Realtor App! Please follow these steps to get started:
+You have been registered to join the Realtor App.
 
-1. Download and install the Realtor App from the Google Play Store or Apple App Store.
-2. Create an account using your email address.
-3. Enter the following invitation code to log in and access all features:
+Your registered email: ${clientEmail}
+Your temporary password: ${tempPassword}
 
-Invitation Code: ${invitationCode}
+Please use the temporary password provided above to log in for the first time. After logging in, we highly recommend that you change your password immediately for security purposes.
 
-We look forward to having you on board!
+If you have any questions or need assistance, please do not hesitate to contact our support team.
+
+Realtor Notes: ${realtorNotes || ''}
 
 Best regards,
 The Realtor App Team
